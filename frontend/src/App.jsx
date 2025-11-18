@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import Markdown from 'react-markdown';
 import axios from 'axios';
 import { Sparkles, Code, Loader2 } from 'lucide-react';
-// We are forced to rely purely on built-in Tailwind utility classes.
 
 // Set the correct, working endpoint URL
 const API_URL = 'http://localhost:5000/ai/getReview';
@@ -25,15 +24,15 @@ const CodeRenderer = ({ inline, className, children, ...props }) => {
     const match = /language-(\w+)/.exec(className || '');
     return !inline && match ? (
         // Styled pre block for code snippets
-        <pre className="bg-gray-800 p-4 rounded-lg text-sm overflow-x-auto my-4 shadow-inner">
-        <code className={`text-white language-${match[1]} font-mono`}>
-            {String(children).replace(/\n$/, '')}
-        </code>
+        <pre className="code-block-pre">
+            <code className={`code-block-code language-${match[1]}`} {...props}>
+                {String(children).replace(/\n$/, '')}
+            </code>
         </pre>
     ) : (
         // Inline code styling
-        <code className="bg-indigo-100 text-indigo-700 px-1 py-0.5 rounded-md text-sm font-mono" {...props}>
-        {children}
+        <code className="inline-code" {...props}>
+            {children}
         </code>
     );
 };
@@ -98,101 +97,90 @@ function App() {
             setReview(errorMessage);
         } finally {
             setIsLoading(false);
-            }
         }
-
-        // Custom components map for react-markdown to improve styling
-        const components = {
-            // Note: We are using Tailwind classes directly in the components map instead of relying on the 'prose' block.
-            code: CodeRenderer,
-            h1: ({ ...props }) => <h1 className="text-3xl font-extrabold text-indigo-700 mt-6 mb-3" {...props} />,
-            h2: ({ ...props }) => <h2 className="text-2xl font-bold text-gray-800 border-b pb-1 mt-6 mb-3" {...props} />,
-            h3: ({ ...props }) => <h3 className="text-xl font-semibold text-gray-700 mt-4 mb-2" {...props} />,
-            p: ({ ...props }) => <p className="mb-4 leading-relaxed text-gray-700" {...props} />,
-            ul: ({ ...props }) => <ul className="list-disc list-inside ml-4 mb-4 space-y-2 text-gray-700" {...props} />,
-            li: ({ ...props }) => <li className="text-gray-600" {...props} />,
-            strong: ({ ...props }) => <strong className="font-bold text-indigo-700" {...props} />,
-        };
-
-        return (
-            // Removed font-['Inter'] class, relying on Tailwind defaults for reliability.
-            <div className="min-h-screen bg-slate-50 p-4 sm:p-8">
-                <header className="mb-8 text-center bg-white p-6 rounded-xl shadow-lg">
-                    <h1 className="text-4xl sm:text-5xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-purple-600 tracking-tight flex justify-center items-center">
-                        <Code className="w-8 h-8 mr-3 text-indigo-500" />
-                        AI Code Reviewer
-                    </h1>
-                    <p className="text-gray-600 mt-3 text-lg">Paste your code and get **Gemini's** expertise to find bugs and suggest improvements.</p>
-                </header>
-
-                <main className="flex flex-col lg:flex-row gap-8 max-w-7xl mx-auto">
-                    
-                    {/* LEFT PANE: CODE EDITOR */}
-                    <div className="flex flex-col w-full lg:w-1/2">
-                        <h2 className="text-2xl font-semibold mb-3 text-gray-800">Code Input</h2>
-                        <div className="flex-grow flex flex-col border border-gray-300 rounded-xl shadow-2xl overflow-hidden bg-[#282c34] transition duration-300 hover:shadow-indigo-300/50">
-                            <textarea
-                                value={code}
-                                onChange={(e) => setCode(e.target.value)}
-                                className="w-full h-full p-4 resize-none bg-[#282c34] text-gray-200 focus:outline-none 
-                                        font-mono text-sm leading-relaxed tracking-tight"
-                                style={{
-                                    minHeight: '400px', // Ensure min height for better feel
-                                    height: '60vh', // Set a responsive height
-                                }}
-                                aria-label="Code editor input"
-                            />
-                        </div>
-                        
-                        <button
-                            onClick={reviewCode}
-                            disabled={isLoading}
-                            className="mt-6 p-4 text-center text-white font-bold rounded-xl cursor-pointer transition duration-300 shadow-xl hover:shadow-2xl transform hover:-translate-y-0.5 flex items-center justify-center 
-                                    focus:outline-none focus:ring-4 focus:ring-purple-300 
-                                    bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 disabled:from-gray-400 disabled:to-gray-500"
-                        >
-                            {isLoading ? (
-                                <span className="flex items-center">
-                                    <Loader2 className="animate-spin w-5 h-5 mr-3" />
-                                    Reviewing Code...
-                                </span>
-                            ) : (
-                                <span className="flex items-center">
-                                    <Sparkles className="w-5 h-5 mr-3" />
-                                    Get AI Review
-                                </span>
-                            )}
-                        </button>
-                    </div>
-
-                    {/* RIGHT PANE: REVIEW OUTPUT */}
-                    <div className="w-full lg:w-1/2 flex flex-col">
-                        <h2 className="text-2xl font-semibold mb-3 text-gray-800">AI Code Review</h2>
-                        <div className="flex-grow p-6 bg-white shadow-2xl rounded-xl overflow-y-auto border border-indigo-100 transition duration-300 hover:shadow-purple-300/50"
-                            style={{ minHeight: '400px', height: '60vh' }}
-                        >
-                            {review ? (
-                                <Markdown components={components}>
-                                    {review}
-                                </Markdown>
-                            ) : isLoading ? (
-                                <div className="flex flex-col items-center justify-center h-full text-center text-indigo-500">
-                                    <Loader2 className="animate-spin w-8 h-8 mb-4" />
-                                    <p className="text-lg italic">The AI is analyzing your code structure and logic...</p>
-                                    <p className="text-sm mt-1 text-gray-500">This may take a moment.</p>
-                                </div>
-                            ) : (
-                                <div className="flex flex-col items-center justify-center h-full text-center p-8">
-                                    <Sparkles className="w-10 h-10 text-purple-400 mb-4" />
-                                    <p className="text-lg text-gray-500 font-medium">Your comprehensive, detailed code review will appear here.</p>
-                                    <p className="text-sm text-gray-400 mt-2">Paste your code on the left and click 'Get AI Review' to begin.</p>
-                                </div>
-                            )}
-                        </div>
-                    </div>
-                </main>
-            </div>
-        );
     }
 
-    export default App;
+    // Custom components map for react-markdown to improve styling
+    const components = {
+        code: CodeRenderer,
+        h1: ({ ...props }) => <h1 className="review-h1" {...props} />,
+        h2: ({ ...props }) => <h2 className="review-h2" {...props} />,
+        h3: ({ ...props }) => <h3 className="review-h3" {...props} />,
+        p: ({ ...props }) => <p className="review-p" {...props} />,
+        ul: ({ ...props }) => <ul className="review-ul" {...props} />,
+        li: ({ ...props }) => <li className="review-li" {...props} />,
+        strong: ({ ...props }) => <strong className="review-strong" {...props} />,
+    };
+
+    return (
+        <div className="app-container">
+            <header className="app-header">
+                <h1 className="app-title">
+                    <Code className="app-icon" />
+                    AI Code Reviewer
+                </h1>
+                <p className="app-subtitle">Paste your code and expertise to find bugs and suggest improvements.</p>
+            </header>
+
+            <main className="main-content">
+                
+                {/* LEFT PANE: CODE EDITOR */}
+                <div className="pane code-pane">
+                    <h2 className="pane-title">Code Input</h2>
+                    <div className="code-editor-wrapper">
+                        <textarea
+                            value={code}
+                            onChange={(e) => setCode(e.target.value)}
+                            className="code-editor"
+                            aria-label="Code editor input"
+                        />
+                    </div>
+                    
+                    <button
+                        onClick={reviewCode}
+                        disabled={isLoading}
+                        className={`review-button ${isLoading ? 'loading' : ''}`}
+                    >
+                        {isLoading ? (
+                            <span className="button-content">
+                                <Loader2 className="button-icon loader-spin" />
+                                Reviewing Code...
+                            </span>
+                        ) : (
+                            <span className="button-content">
+                                <Sparkles className="button-icon" />
+                                Get AI Review
+                            </span>
+                        )}
+                    </button>
+                </div>
+
+                {/* RIGHT PANE: REVIEW OUTPUT */}
+                <div className="pane review-pane">
+                    <h2 className="pane-title">AI Code Review</h2>
+                    <div className="review-panel">
+                        {review ? (
+                            <Markdown components={components}>
+                                {review}
+                            </Markdown>
+                        ) : isLoading ? (
+                            <div className="review-loading-state">
+                                <Loader2 className="review-loader loader-spin" />
+                                <p className="review-loading-text">The AI is analyzing your code structure and logic...</p>
+                                <p className="review-sub-text">This may take a moment.</p>
+                            </div>
+                        ) : (
+                            <div className="review-empty-state">
+                                <Sparkles className="empty-state-icon" />
+                                <p className="review-empty-text">Your comprehensive, detailed code review will appear here.</p>
+                                <p className="review-sub-text">Paste your code on the left and click 'Get AI Review' to begin.</p>
+                            </div>
+                        )}
+                    </div>
+                </div>
+            </main>
+        </div>
+    );
+}
+
+export default App;

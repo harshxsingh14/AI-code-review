@@ -1,68 +1,388 @@
-/* :root {
+/* =========================================================================
+ * 1. BASE STYLES & RESETS
+ * ========================================================================= */
+
+:root {
+  /* Define main colors and font variables */
+  --color-primary: #4f46e5; /* Indigo 600 */
+  --color-secondary: #9333ea; /* Purple 600 */
+  --color-text-dark: #1f2937; /* Gray 800 */
+  --color-text-medium: #4b5563; /* Gray 600 */
+  --color-text-light: #6b7280; /* Gray 500 */
+  --color-background: #f9fafb; /* Gray 50 */
+  --color-editor-bg: #282c34;
+
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
-
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
-
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-a:hover {
-  color: #535bf2;
+  color-scheme: light;
 }
 
 body {
   margin: 0;
+  padding: 0;
+  /* Use a flex-based layout for app centering/full height */
   display: flex;
-  place-items: center;
+  justify-content: center;
+  align-items: flex-start; /* Align to top, not center, for main content */
   min-width: 320px;
   min-height: 100vh;
+  background-color: var(--color-background);
 }
 
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
-}
-
-button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
+/* Base button and link styles */
+a {
   font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
-  cursor: pointer;
-  transition: border-color 0.25s;
+  color: var(--color-primary);
+  text-decoration: inherit;
 }
-button:hover {
-  border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
+a:hover {
+  color: var(--color-secondary);
 }
 
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
+/* =========================================================================
+ * 2. APP LAYOUT AND CONTAINERS
+ * ========================================================================= */
+
+.app-container {
+  width: 100%;
+  padding: 1rem; /* p-4 */
+  min-height: 100vh;
+  box-sizing: border-box;
+}
+
+@media (min-width: 640px) { /* sm breakpoint */
+  .app-container {
+    padding: 2rem; /* sm:p-8 */
   }
-  a:hover {
-    color: #747bff;
+}
+
+.app-header {
+  margin-bottom: 2rem;
+  text-align: center;
+  background-color: #fff;
+  padding: 1.5rem;
+  border-radius: 0.75rem; /* rounded-xl */
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); /* shadow-lg */
+  /* Custom branded shadow */
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04), 0 0 0 1px rgba(79, 70, 229, 0.1);
+}
+
+.app-title {
+  font-size: 2.5rem; /* 4xl */
+  line-height: 1.1;
+  font-weight: 800; /* extabold */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  letter-spacing: -0.025em; /* tracking-tight */
+
+  /* Gradient text effect */
+  background-image: linear-gradient(to right, var(--color-primary), var(--color-secondary));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  color: transparent; /* fallback */
+}
+
+@media (min-width: 640px) { /* sm breakpoint */
+  .app-title {
+    font-size: 3rem; /* sm:text-5xl */
   }
-  button {
-    background-color: #f9f9f9;
+}
+
+.app-icon {
+  width: 2rem; /* w-8 */
+  height: 2rem; /* h-8 */
+  margin-right: 0.75rem; /* mr-3 */
+  color: #6366f1; /* Indigo 500 */
+}
+
+.app-subtitle {
+  color: var(--color-text-medium);
+  margin-top: 0.75rem;
+  font-size: 1.125rem; /* text-lg */
+}
+
+.main-content {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  max-width: 80rem; /* max-w-7xl */
+  margin: 0 auto;
+}
+
+@media (min-width: 1024px) { /* lg breakpoint */
+  .main-content {
+    flex-direction: row;
   }
-} */
+}
+
+.pane {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+@media (min-width: 1024px) { /* lg breakpoint */
+  .code-pane, .review-pane {
+    width: 50%; /* lg:w-1/2 */
+  }
+}
+
+.pane-title {
+  font-size: 1.5rem; /* text-2xl */
+  font-weight: 600; /* font-semibold */
+  margin-bottom: 0.75rem;
+  color: var(--color-text-dark);
+}
+
+/* =========================================================================
+ * 3. CODE EDITOR STYLES
+ * ========================================================================= */
+
+.code-editor-wrapper {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid #d1d5db; /* border-gray-300 */
+  border-radius: 0.75rem; /* rounded-xl */
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04); /* shadow-2xl */
+  overflow: hidden;
+  background-color: var(--color-editor-bg);
+  transition: box-shadow 300ms ease;
+}
+
+.code-editor-wrapper:hover {
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.5); /* hover:shadow-indigo-300/50 */
+}
+
+.code-editor {
+  width: 100%;
+  height: 100%;
+  min-height: 400px;
+  max-height: 60vh;
+  box-sizing: border-box;
+  padding: 1rem;
+  resize: none;
+  background-color: var(--color-editor-bg);
+  color: #e5e7eb; /* text-gray-200 */
+  font-family: monospace;
+  font-size: 0.875rem; /* text-sm */
+  line-height: 1.5;
+  letter-spacing: -0.01em;
+  border: none;
+  outline: none;
+}
+
+/* =========================================================================
+ * 4. REVIEW BUTTON STYLES
+ * ========================================================================= */
+
+.review-button {
+  margin-top: 1.5rem;
+  padding: 1rem;
+  text-align: center;
+  color: #fff;
+  font-weight: 700;
+  border-radius: 0.75rem;
+  cursor: pointer;
+  transition: all 300ms ease;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); /* shadow-xl */
+
+  /* Gradient background */
+  background-image: linear-gradient(to right, var(--color-primary), var(--color-secondary));
+  border: none;
+  outline: none;
+  /* Reset default button font */
+  font-family: inherit;
+  font-size: 1rem;
+}
+
+.review-button:hover {
+  /* Darker gradient on hover */
+  background-image: linear-gradient(to right, #4338ca, #7e22ce);
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2), 0 10px 10px -5px rgba(0, 0, 0, 0.08); /* hover:shadow-2xl */
+  transform: translateY(-2px); /* hover:-translate-y-0.5 */
+}
+
+.review-button:focus {
+  outline: 4px solid #a5b4fc; /* focus:ring-4 focus:ring-indigo-300 */
+}
+
+.review-button[disabled] {
+  cursor: not-allowed;
+  background-image: linear-gradient(to right, #9ca3af, #6b7280); /* Disabled gray gradient */
+}
+
+.button-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.button-icon {
+  width: 1.25rem;
+  height: 1.25rem;
+  margin-right: 0.75rem;
+}
+
+.loader-spin {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* =========================================================================
+ * 5. REVIEW PANEL & OUTPUT STYLES
+ * ========================================================================= */
+
+.review-panel {
+  flex-grow: 1;
+  padding: 1.5rem;
+  background-color: #fff;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04); /* shadow-2xl */
+  border-radius: 0.75rem;
+  overflow-y: auto;
+  min-height: 400px;
+  max-height: 60vh;
+  border: 1px solid #e0e7ff; /* border-indigo-100 */
+  transition: box-shadow 300ms ease;
+}
+
+.review-panel:hover {
+  box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.5); /* hover:shadow-purple-300/50 */
+}
+
+/* Loading and Empty States */
+.review-loading-state, .review-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  text-align: center;
+  padding: 2rem;
+}
+
+.review-loader {
+  width: 2rem;
+  height: 2rem;
+  margin-bottom: 1rem;
+  color: #6366f1; /* Indigo 500 */
+}
+
+.review-loading-text {
+  font-size: 1.125rem;
+  font-style: italic;
+  color: #6366f1;
+}
+
+.review-empty-state .review-empty-text {
+  font-size: 1.125rem;
+  font-weight: 500;
+  color: var(--color-text-light);
+}
+
+.review-sub-text {
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
+  color: #9ca3af; /* Gray 400 */
+}
+
+.empty-state-icon {
+  width: 2.5rem;
+  height: 2.5rem;
+  color: #c084fc; /* Purple 400 */
+  margin-bottom: 1rem;
+}
+
+/* =========================================================================
+ * 6. MARKDOWN STYLES (Review Output)
+ * ========================================================================= */
+
+.review-h1 {
+  font-size: 1.875rem; /* text-3xl */
+  font-weight: 800;
+  color: var(--color-primary);
+  margin-top: 1.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.review-h2 {
+  font-size: 1.5rem; /* text-2xl */
+  font-weight: 700;
+  color: var(--color-text-dark);
+  border-bottom: 1px solid #e5e7eb; /* border-b */
+  padding-bottom: 0.25rem;
+  margin-top: 1.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.review-h3 {
+  font-size: 1.25rem; /* text-xl */
+  font-weight: 600;
+  color: #4b5563; /* Gray 700 */
+  margin-top: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.review-p {
+  margin-bottom: 1rem;
+  line-height: 1.625;
+  color: #4b5563; /* Gray 700 */
+}
+
+.review-ul {
+  list-style-type: disc;
+  margin-left: 1rem;
+  margin-bottom: 1rem;
+  padding-left: 1rem;
+  list-style-position: inside;
+  color: #4b5563; /* Gray 700 */
+}
+
+.review-li {
+  margin-bottom: 0.5rem;
+  color: var(--color-text-medium);
+}
+
+.review-strong {
+  font-weight: 700;
+  color: var(--color-primary);
+}
+
+/* Code block rendering */
+.code-block-pre {
+  background-color: #1f2937; /* Gray 800 */
+  padding: 1rem;
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+  overflow-x: auto;
+  margin: 1rem 0;
+  box-shadow: inset 0 2px 4px 0 rgba(0, 0, 0, 0.6); /* shadow-inner */
+}
+
+.code-block-code {
+  color: #fff;
+  font-family: monospace;
+}
+
+/* Inline code styling */
+.inline-code {
+  background-color: #eef2ff; /* Indigo 100 */
+  color: #4338ca; /* Indigo 700 */
+  padding: 0 0.25rem;
+  padding-top: 1px;
+  padding-bottom: 1px;
+  border-radius: 0.375rem;
+  font-size: 0.875rem;
+  font-family: monospace;
+}

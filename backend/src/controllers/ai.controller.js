@@ -1,4 +1,4 @@
-const aiService = require("../services/ai.service");
+const aiService = require("../services/ai.service.js");
 
 module.exports.getReview = async (req, res) => {
     try {
@@ -13,6 +13,7 @@ module.exports.getReview = async (req, res) => {
 
     } catch (error) {
         console.error("Controller Error:", error);
+        // ✅ CORRECTED LINE: Sends the string message "Error generating review"
         res.status(500).send("Error generating review");
     }
 };
