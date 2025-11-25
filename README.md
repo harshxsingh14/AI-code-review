@@ -22,11 +22,10 @@ This tool helps developers maintain clean, secure, and optimized code efficientl
 
 ## Tech Stack
 
-- Frontend: React + shadcn UI
+- Frontend: React
 - Backend: Next.js / Node.js
 - AI Model: Google Gemini API
-- Database (optional): PostgreSQL / MongoDB
-- Authentication (optional): Clerk / JWT
+- Databas
 
 ---
 
