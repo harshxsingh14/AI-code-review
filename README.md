@@ -25,7 +25,7 @@ This tool helps developers maintain clean, secure, and optimized code efficientl
 - Frontend: React
 - Backend: Next.js / Node.js
 - AI Model: Google Gemini API
-- Databas
+
 
 ---
 
