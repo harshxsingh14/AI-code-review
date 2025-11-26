@@ -29,5 +29,4 @@ This tool helps developers maintain clean, secure, and optimized code efficientl
 
 ---
 
-## Folder Structure
 
