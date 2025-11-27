@@ -1,4 +1,4 @@
-# AI Code Review Tool (Powered by Gemini)
+# AI Code Review (Powered by Gemini)
 
 An automated code review system that analyzes source code, detects issues, and provides improvement suggestions using Google Gemini AI.  
 This tool helps developers maintain clean, secure, and optimized code efficiently.
